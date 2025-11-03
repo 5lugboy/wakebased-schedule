@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wake-Based Schedule</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    h1 { margin-bottom: 0; }
+    p { margin-top: 0; }
+    .slot {
+      margin-bottom: 15px;
+      padding: 10px;
+      background: white;
+      border-left: 4px solid #007bff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Wake-Based Schedule</h1>
+  <p>Tap the button when you wake up:</p>
+  <button onclick="startSchedule()">I Just Woke Up</button>
+  <div id="schedule"></div>
+
+  <script>
+    const SCHEDULE = [
+      { hours: 0, label: "Morning Routine + Breakfast" },
+      { hours: 1, label: "Workout or Content Creation" },
+      { hours: 2, label: "Work Block 1" },
+      { hours: 3, label: "Work Block 2" },
+      { hours: 4, label: "Lunch Break (30 min)" },
+      { hours: 4.5, label: "Work Block 3" },
+      { hours: 5.5, label: "Work Block 4" },
+      { hours: 7, label: "Educational Time (Japanese, Reading, Film)" },
+      { hours: 8.5, label: "Creative Time (Writing, Music, Dinner Viewing)" },
+      { hours: 10, label: "Free Time (Movies, Games, Friends)" },
+      { hours: 12, label: "Sleep" }
+    ];
+
+    let wakeTime = null;
+
+    function startSchedule() {
+      wakeTime = new Date();
+      updateSchedule();
+    }
+
+    function updateSchedule() {
+      const now = new Date();
+      const elapsed = (now - wakeTime) / (1000 * 60 * 60); // hours since waking
+      const scheduleDiv = document.getElementById("schedule");
+      scheduleDiv.innerHTML = '';
+
+      SCHEDULE.forEach(slot => {
+        const isActive = elapsed >= slot.hours && elapsed < slot.hours + 1.5;
+        const div = document.createElement("div");
+        div.className = "slot";
+        div.style.opacity = isActive ? "1" : "0.5";
+        div.innerHTML = `<strong>${slot.label}</strong><br><small>${slot.hours}h since wake</small>`;
+        scheduleDiv.appendChild(div);
+      });
+    }
+
+    setInterval(() => {
+      if (wakeTime) updateSchedule();
+    }, 60000); // update every minute
+  </script>
+</body>
+</html>
